@@ -27,7 +27,7 @@ const VueBarcodeScanner = {
     Vue.prototype.$barcodeScanner.init = (callback) => {
       // add listenter for scanner
       // use keypress to separate lower/upper case character from scanner
-      addListener('keypress')
+      addListener('keyup')
       // use keydown only to detect Tab event (Tab cannot be detected using keypress)
       addListener('keydown')
       attributes.callback = callback
@@ -35,7 +35,7 @@ const VueBarcodeScanner = {
 
     Vue.prototype.$barcodeScanner.destroy = () => {
       // remove listener
-      removeListener('keypress')
+      removeListener('keyup')
       removeListener('keydown')
     }
 
@@ -87,12 +87,19 @@ const VueBarcodeScanner = {
             triggerSound()
           }
           // prevent TAB navigation for scanner
-          if (event.keyCode === 9) {
+          if (event.charCode === 9) {
             event.preventDefault()
           }
         } else {
+            var cchode  =   event.keyCode || event.charCode;
           // scan and validate each charactor
-          attributes.barcode += event.key
+          if(String.fromCharCode(cchode).replace(/[^\x20-\x7E]+/g, '') != '') {
+              attributes.barcode += event.key
+              // console.log(String.fromCharCode(cchode));
+              // console.log(event.charCode);
+              // console.log(event);
+          }
+          // attributes.barcode += event.key
         }
       }
     }
