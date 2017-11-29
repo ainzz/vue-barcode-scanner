@@ -6,7 +6,7 @@ const VueBarcodeScanner = {
             setting: {
                 sound: false,
                 soundSrc: '',
-                scannerSensitivity: 200
+                scannerSensitivity: 100
             },
             callback: null,
             hasListener: false,
@@ -91,11 +91,11 @@ const VueBarcodeScanner = {
         }
 
         function onInputScanned(event) {
+
             // ignore other keydown event that is not a TAB, so there are no duplicate keys
             if (event.type === 'keydown' && event.keyCode != 9) {
                 return
             }
-
             if (checkInputElapsedTime(Date.now())) {
                 // console.log(event);
                 if ((event.keyCode === 13 || event.keyCode === 9) && attributes.barcode !== '') {
@@ -116,12 +116,13 @@ const VueBarcodeScanner = {
                         event.preventDefault()
                     }
                 } else {
+                    // console.log(event);
                     var cchode = event.keyCode || event.charCode;
                     // scan and validate each charactor
+                    // console.log(event);
                     if (event.location === 0 && !attributes.lastPressedKeyControl) {
                         // attributes.barcode += String.fromCharCode(cchode)
                         attributes.barcode += attributes.lastPressedKeyShift ? (attributes.combinations.hasOwnProperty(event.key) ? attributes.combinations[event.key] : event.key.toUpperCase()) : event.key
-
                         // console.log(event);
                     } else {
                         // console.log(event);
@@ -145,27 +146,33 @@ const VueBarcodeScanner = {
 
         // check whether the keystrokes are considered as scanner or human
         function checkInputElapsedTime(timestamp) {
+            // console.log(attributes.pressedTime);
+            // console.log(attributes.barcode);
             // push current timestamp to the register
+            if (attributes.pressedTime.length === 1 && ((timestamp - attributes.pressedTime[0]) > attributes.setting.scannerSensitivity)) {
+                 attributes.barcode = ''
+            }
+            attributes.pressedTime = []
             attributes.pressedTime.push(timestamp)
             // when register is full (ready to compare)
-            if (attributes.pressedTime.length === 2) {
-                // compute elapsed time between 2 keystrokes
-                let timeElapsed = attributes.pressedTime[1] - attributes.pressedTime[0];
-                // too slow (assume as human)
-                if (timeElapsed >= attributes.setting.scannerSensitivity) {
-                    // put latest key char into barcode
-                    attributes.barcode = event.key
-                    // remove(shift) first timestamp in register
-                    attributes.pressedTime.shift()
-                    // not fast enough
-                    return false
-                }
-                // fast enough (assume as scanner)
-                else {
-                    // reset the register
-                    attributes.pressedTime = []
-                }
-            }
+            // if (attributes.pressedTime.length === 2) {
+            //     // compute elapsed time between 2 keystrokes
+            //     let timeElapsed = attributes.pressedTime[1] - attributes.pressedTime[0];
+            //     // too slow (assume as human)
+            //     if (timeElapsed >= attributes.setting.scannerSensitivity) {
+            //         // put latest key char into barcode
+            //         // if(event.location === 0%7GCCF026017) attributes.barcode = event.key
+            //         // remove(shift) first timestamp in register
+            //         attributes.pressedTime.shift()
+            //         attributes.barcode = ''
+            //         // not fast enough
+            //     }
+            //     // fast enough (assume as scanner)
+            //     else {
+            //         // reset the register
+            //     }
+            // } else if (attributes.pressedTime.length === 1 && (timestamp - attributes.pressedTime[0]) > attributes.setting.scannerSensitivity) attributes.barcode = ''
+            //
             // not able to check (register is empty before pushing) or assumed as scanner
             return true
         }
