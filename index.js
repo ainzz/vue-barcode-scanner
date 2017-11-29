@@ -116,7 +116,6 @@ const VueBarcodeScanner = {
                         event.preventDefault()
                     }
                 } else {
-                    console.log(event);
                     var cchode = event.keyCode || event.charCode;
                     // scan and validate each charactor
                     if (event.location === 0 && !attributes.lastPressedKeyControl) {
