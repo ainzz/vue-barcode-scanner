@@ -6,13 +6,37 @@ const VueBarcodeScanner = {
             setting: {
                 sound: false,
                 soundSrc: '',
-                scannerSensitivity: 100
+                scannerSensitivity: 200
             },
             callback: null,
             hasListener: false,
             pressedTime: [],
             lastPressedKeyControl: false,
-            lastPressedKeyShift: false
+            lastPressedKeyShift: false,
+            combinations: {
+                '`': '~',
+                '1': '!',
+                '2': '@',
+                '3': '#',
+                '4': '$',
+                '5': '%',
+                '6': '^',
+                '7': '&',
+                '8': '*',
+                '9': '(',
+                '0': ')',
+                '-': '_',
+                '+': '+',
+                '<': '>',
+                ',': '<',
+                '.': '>',
+                '/': '?',
+                ';': ':',
+                '\'': '"',
+                '\\': '|',
+                '[': '{',
+                ']': '}',
+            }
         }
 
         // initial plugin setting
@@ -92,11 +116,12 @@ const VueBarcodeScanner = {
                         event.preventDefault()
                     }
                 } else {
+                    console.log(event);
                     var cchode = event.keyCode || event.charCode;
                     // scan and validate each charactor
                     if (event.location === 0 && !attributes.lastPressedKeyControl) {
                         // attributes.barcode += String.fromCharCode(cchode)
-                        attributes.barcode += attributes.lastPressedKeyShift ? event.key.toUpperCase() : event.key
+                        attributes.barcode += attributes.lastPressedKeyShift ? (attributes.combinations.hasOwnProperty(event.key) ? attributes.combinations[event.key] : event.key.toUpperCase()) : event.key
 
                         // console.log(event);
                     } else {
