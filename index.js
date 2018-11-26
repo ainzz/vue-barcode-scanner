@@ -97,10 +97,7 @@ const VueBarcodeScanner = {
 			if (event.type === 'keydown' && event.keyCode != 9) {
 				return
 			}
-			console.log(event);
-
 			if (checkInputElapsedTime(Date.now())) {
-				// console.log(event);
 				if ((event.keyCode === 13 || event.keyCode === 9) && attributes.barcode !== '') {
 					// scanner is done and trigger Enter/Tab then clear barcode and play the sound if it's set as true
 					attributes.callback(attributes.barcode)
@@ -119,32 +116,15 @@ const VueBarcodeScanner = {
 						event.preventDefault()
 					}
 				} else {
-					// console.log(event);
 					var cchode = event.keyCode || event.charCode;
 					// scan and validate each charactor
-					// console.log(event);
-
 					if (event.location === 0 && !attributes.lastPressedKeyControl) {
-						// attributes.barcode += String.fromCharCode(cchode)
 						attributes.barcode += attributes.lastPressedKeyShift ? (attributes.combinations.hasOwnProperty(event.key) ? attributes.combinations[event.key] : event.key.toUpperCase()) : event.key
-						// console.log(event);
-					} else {
-						// console.log(event);
 					}
 
 					attributes.lastPressedKeyControl = (event.key === 'Control')
 					attributes.lastPressedKeyShift = (event.key === 'Shift' && !attributes.lastKeyHadShift)
 					attributes.lastKeyHadShift = (event.key !== 'Shift' && event.key !== 'Control' && event.shiftKey) || false
-
-					// if(String.fromCharCode(cchode).replace(/[^\x20-\x7F]+/g, '') != '') {
-					//     // console.log(event.charCode);
-					//     console.log(event);
-					//
-					//     // console.log(event);
-					// } else {
-					//     console.log(event);
-					// }
-					// attributes.barcode += event.key
 				}
 			}
 		}
